@@ -11,8 +11,9 @@ public class ItemTest : IDisposable
  {
     public ItemTest()
     {
-      DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=3306;database=todo_test;";
+     DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=todo_list;";
     }
+
     public void Dispose()
     {
       Item.DeleteAll();
@@ -127,6 +128,29 @@ public class ItemTest : IDisposable
       //Assert
       CollectionAssert.AreEqual(testList, result);
     }
+
+    [TestMethod]
+    public void Delete_DeletesItemAssociationsFromDatabase_ItemList()
+    {
+      //Arrange
+      Category testCategory = new Category("Home stuff");
+      testCategory.Save();
+
+      string testDescription = "Mow the lawn";
+      Item testItem = new Item(testDescription);
+      testItem.Save();
+
+      //Act
+      testItem.AddCategory(testCategory);
+      testItem.Delete();
+
+      List<Item> resultCategoryItems = testCategory.GetItems();
+      List<Item> testCategoryItems = new List<Item> {};
+
+      //Assert
+      CollectionAssert.AreEqual(testCategoryItems, resultCategoryItems);
+    }
+
 
 
   }
